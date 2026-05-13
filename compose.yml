@@ -1,0 +1,14 @@
+services:
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    ports:
+      - "8081:8080"
+    # если URLS закомментировано, то в Swagger UI будет куда поставить свой URL если такое нужно.
+    environment:
+      URLS: |
+        [
+          { "url": "http://localhost:8080/api-docs", "name": "App 1 (Local)" },
+          { "url": "https://petstore.swagger.io/v2/swagger.json", "name": "Petstore Example" }
+        ]
+      URLS_PRIMARY_NAME: "App 1 (Local)"
+      # URLS_PRIMARY_URL: "http://localhost:8080/api-docs"

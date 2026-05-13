@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: swagger-ui-demo
+
+# Настройки Springdoc OpenAPI
+springdoc:
+  api-docs:
+    path: /api-docs # Путь, по которому будет доступна JSON спецификация OpenAPI
+  swagger-ui:
+    path: /swagger-ui.html # Путь к интерфейсу Swagger UI
+    operations-sorter: alpha # Сортировка операций по алфавиту
+    tags-sorter: alpha # Сортировка тегов по алфавиту
+    display-request-duration: true # Отображать время выполнения запроса
+  show-actuator: true # Показывать эндпоинты Actuator в документации (если есть)
+
+server:
+  port: 8080 # Свой сервер Swagger UI будет поднят
