@@ -12,12 +12,12 @@ podman ps
 ```
 
 ### Тесты
-```bash
+```
 ./gradlew test
 ```
 
 ### Запускаем проект
-```bash
+```
 ./gradlew clean build bootRun 
 ```
 
@@ -25,7 +25,8 @@ podman ps
 ```bash
 curl http://localhost:8080/api-docs | jq
 ```
-### Просмотр Swagger UI cгенерируемого SpringBoot
+### Просмотр Swagger UI cгенерируемого SpringBoot 
+###   по умолчанию откроется локальная схема и будет "Explorer" куда можно скопировать ссылки на дургие OpenAPI схемы
 ```bash
 open http://localhost:8080/swagger-ui.html
 ```
