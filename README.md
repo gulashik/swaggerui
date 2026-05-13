@@ -1,54 +1,73 @@
-### Swagger UI
 
-### Зависимости
-Основная зависимость — `springdoc-openapi-starter-webmvc-ui`.
-Вспомогательные зависимости:
-- `spring-boot-starter-validation` - для валидации данных Springdoc учитывает их при генерации схемы.
+<!-- TOC -->
+* [Swagger UI, OpenAPI & AsyncAPI в Spring Boot](#swagger-ui-openapi--asyncapi-в-spring-boot)
+  * [Зависимости (build.gradle.kts)](#зависимости-buildgradlekts)
+  * [Разметка](#разметка-)
+    * [OpenAPI (Swagger)](#openapi-swagger)
+    * [AsyncAPI (Springwolf)](#asyncapi-springwolf)
+  * [OpenAPI vs AsyncAPI](#openapi-vs-asyncapi)
+  * [Генерация: Способы и инструменты](#генерация-способы-и-инструменты)
+    * [Генерация схемы из кода (Code-First)](#генерация-схемы-из-кода-code-first)
+    * [Генерация кода из схемы (Design-First / Contract-First)](#генерация-кода-из-схемы-design-first--contract-first)
+  * [Запуск проекта](#запуск-проекта)
+<!-- TOC -->
 
-### Конфигурация
-В [application.yml](src/main/resources/application.yml) задаются базовые пути:
-    - `/api-docs` — JSON спецификация.
-    - `/swagger-ui.html` — визуальный интерфейс.
-
-Программная настройка через бин `OpenAPI` в [OpenAPIConfig.java](src/main/java/org/gulash/demo/config/OpenAPIConfig.java) позволяет добавить метаданные: лицензии, контакты, описание.
-
-### Разметка кода
-1. **Контроллеры**: [UserController.java](src/main/java/org/gulash/demo/controller/UserController.java) Использование `@Tag` для группировки и `@Operation` для описания методов.
-2. **DTO**:  Использование `@Schema` для описания полей и примеров данных.
-3. **Валидация**: [UserDto.java](src/main/java/org/gulash/demo/dto/UserDto.java), [UserController.java](src/main/java/org/gulash/demo/controller/UserController.java) Аннотации `@NotBlank`, `@Min` и др. автоматически подхватываются Swagger-ом и отображаются как ограничения в UI.
-
-
-### Пример готовой схемы
-Файл [api-docs.json](api-docs.json) показывает пример JSON спецификацию Open API.
-
-## Как использовать
-Сборка, запуск и использование смотрим [ACTIONS.md](ACTIONS.md)
+---
+# Swagger UI, OpenAPI & AsyncAPI в Spring Boot
+## Зависимости (build.gradle.kts)
+- `spring-boot-starter-web`: Базовая зависимость для REST API. Swagger документирует именно эти эндпоинты.
+- `springdoc-openapi-starter-webmvc-ui`: Основной движок для OpenAPI 3. Генерирует JSON/YAML спецификацию и предоставляет встроенный Swagger UI.
+- `spring-boot-starter-validation`: Позволяет Swagger-у видеть ограничения полей (`@Min`, `@NotBlank`) и отображать их в UI как правила валидации.
+- `io.github.springwolf:springwolf-kafka`: Аналог springdoc, но для асинхронных протоколов. Сканирует `@KafkaListener` и генерирует AsyncAPI схему.
+- `io.github.springwolf:springwolf-ui`: Визуальный интерфейс для просмотра AsyncAPI схем.
 
 ---
 
-### OpenAPI vs AsyncAPI
+## Разметка 
 
-| Характеристика         | OpenAPI (Swagger)             | AsyncAPI                                         |
-|:-----------------------|:------------------------------|:-------------------------------------------------|
-| **Тип взаимодействия** | Синхронный (Request-Response) | Асинхронный (Event-Driven / Pub-Sub)             |
-| **Протоколы**          | HTTP(S)                       | Kafka, RabbitMQ, MQTT, WebSocket, и др.          |
-| **Основной фокус**     | Эндпоинты (Paths)             | Каналы (Channels), Сообщения (Messages)          |
-| **Spring Boot**        | Интеграция через `springdoc`  | Интеграция через `springwolf` (аналог springdoc) |
+### OpenAPI (Swagger)
+1. **Добавление зависимости**: `springdoc-openapi-starter-webmvc-ui`.
+2. **Конфигурация**: В `application.yml` задаются пути `/api-docs` и `/swagger-ui.html`.
+3. **Метаданные**: Создание бина `OpenAPI` в `OpenAPIConfig.java` для описания версии, контактов и лицензий.
+4. **Разметка**:
+   - `@Tag`: Группировка методов контроллера.
+   - `@Operation`: Описание конкретного HTTP-метода.
+   - `@Schema`: Описание DTO и его полей.
+
+### AsyncAPI (Springwolf)
+1. **Добавление зависимостей**: `springwolf-kafka` и `springwolf-ui`.
+2. **Конфигурация**: Настройка свойств `springwolf.docket.*` в `application.yml` или через бин `AsyncAPI`.
+3. **Разметка**:
+   - `@AsyncListener`: Документирование потребления сообщений (Consumer).
+   - `@AsyncPublisher`: Документирование публикации сообщений (Producer).
+   - `@KafkaTopicOperation`: Специфичные для Kafka настройки топика.
 
 ---
 
-### Генерация: Способы и приложения
+## OpenAPI vs AsyncAPI
+
+| Характеристика     | OpenAPI (Swagger)             | AsyncAPI                         |
+|:-------------------|:------------------------------|:---------------------------------|
+| **Взаимодействие** | Синхронное (Request-Response) | Асинхронное (Event-Driven)       |
+| **Протоколы**      | HTTP(S)                       | Kafka, RabbitMQ, MQTT, WebSocket |
+| **Фокус**          | Эндпоинты (Paths)             | Каналы (Channels), Сообщения     |
+| **Spring Boot**    | `springdoc-openapi`           | `springwolf`                     |
+
+---
+
+## Генерация: Способы и инструменты
 
 ### Генерация схемы из кода (Code-First)
-- **Способ:** Использование библиотеки `springdoc-openapi`.
-- **Плюсы:** Документация всегда актуальна и соответствует коду.
-- **Минусы:** Схема "размазана" по аннотациям в коде.
+- **Как:** Используется в этом проекте. Библиотеки сканируют аннотации и рефлексией строят схему.
+- **Плюсы:** Документация всегда соответствует коду.
+- **Минусы:** Код "загрязнен" аннотациями документации.
 
 ### Генерация кода из схемы (Design-First / Contract-First)
-- **Инструменты:** [OpenAPI Generator](https://openapi-generator.tech/), [Swagger Codegen](https://swagger.io/tools/swagger-codegen/).
-- **Применение:** Сначала рисуется YAML файл, затем генерируются интерфейсы контроллеров и DTO.
-- **Плюсы:** Строгое соблюдение контракта, возможность параллельной разработки фронтенда и бэкенда.
+- **Инструменты:** [OpenAPI Generator](https://openapi-generator.tech/), [Swagger Codegen].
+- **Как:** Сначала создается YAML файл (контракт), затем плагин генерирует интерфейсы контроллеров и DTO.
+- **Плюсы:** Строгое соблюдение контракта, параллельная разработка фронта и бэка.
 
-### Генерация UI из схемы
-- **Swagger UI**: Самый популярный. Может запускаться как внутри Java-приложения, так и в Docker (см. `compose.yml`).
-- **Redoc**: Альтернативный UI, ориентированный на чтение (трехпанельный вид).
+---
+
+## Запуск проекта
+Подробные инструкции по запуску и тестированию находятся в файле [ACTIONS.md](ACTIONS.md).

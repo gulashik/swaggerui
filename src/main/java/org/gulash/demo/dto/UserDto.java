@@ -26,17 +26,34 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "Сущность пользователя")
+@Schema(description = "Сущность пользователя для REST взаимодействия")
 public class UserDto {
 
+    /**
+     * Уникальный идентификатор пользователя.
+     * <p>
+     * <b>Best Practice:</b> Всегда указывайте {@code example}, чтобы Swagger UI мог сгенерировать
+     * валидное тело запроса для тестирования.
+     * </p>
+     */
     @Schema(description = "Уникальный идентификатор", example = "1")
     @Positive(message = "ID должен быть положительным числом")
     private Long id;
 
+    /**
+     * Имя пользователя. Не может быть пустым.
+     * <p>
+     * Аннотация {@link jakarta.validation.constraints.NotBlank} автоматически учитывается Springdoc-ом,
+     * добавляя пометку "required" в схему OpenAPI.
+     * </p>
+     */
     @Schema(description = "Имя пользователя", example = "Иван")
     @NotBlank(message = "Имя не может быть пустым")
     private String name;
 
+    /**
+     * Электронная почта пользователя.
+     */
     @Schema(description = "Электронная почта", example = "ivan@example.com")
     @NotBlank(message = "Email не может быть пустым")
     private String email;

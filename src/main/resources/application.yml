@@ -1,6 +1,18 @@
 spring:
   application:
     name: swagger-ui-demo
+  # Настройки Kafka для демонстрации
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: swagger-demo-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "org.gulash.demo.dto"
 
 # Настройки Springdoc OpenAPI
 springdoc:
@@ -12,6 +24,31 @@ springdoc:
     tags-sorter: alpha # Сортировка тегов по алфавиту
     display-request-duration: true # Отображать время выполнения запроса
   show-actuator: true # Показывать эндпоинты Actuator в документации (если есть)
+
+# Настройки Springwolf AsyncAPI
+springwolf:
+  docket:
+    base-package: org.gulash.demo
+    info:
+      title: "Swagger UI Demo AsyncAPI"
+      version: "1.0.0"
+      description: "Демонстрационный проект AsyncAPI (Kafka) для обучения"
+      contact:
+        name: "Gulash Team"
+        email: "support@gulash.org"
+        url: "https://github.com/springwolf/springwolf-core"
+      license:
+        name: "Apache 2.0"
+        url: "https://www.apache.org/licenses/LICENSE-2.0"
+    servers:
+      kafka:
+        protocol: kafka
+        host: localhost:9092
+  scanner:
+    async-listener:
+      enabled: true
+    async-publisher:
+      enabled: true
 
 server:
   port: 8080 # Свой сервер Swagger UI будет поднят

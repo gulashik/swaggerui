@@ -33,6 +33,16 @@ dependencies {
     // Springdoc учитывает их при генерации схемы.
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
+    // Springwolf: Библиотека для автогенерации AsyncAPI документации (аналог springdoc для OpenAPI).
+    // Позволяет описывать каналы (каналы обмена сообщениями), протоколы (Kafka, RabbitMQ и др.) и сообщения.
+    // Используем версии 1.6.0, которые соответствуют Spring Boot 3.3.x.
+    implementation("io.github.springwolf:springwolf-kafka:1.6.0")
+    implementation("io.github.springwolf:springwolf-ui:1.6.0")
+    implementation("io.github.springwolf:springwolf-core:1.6.0")
+
+    // Spring Kafka: Для работы с Kafka. Необходим для демонстрации AsyncAPI с протоколом Kafka.
+    implementation("org.springframework.kafka:spring-kafka")
+
     // Lombok: Для уменьшения шаблонного кода (геттеры, сеттеры, конструкторы).
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")

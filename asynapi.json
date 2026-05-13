@@ -1,0 +1,156 @@
+{
+  "asyncapi": "3.0.0",
+  "info": {
+    "title": "Swagger UI Demo AsyncAPI",
+    "version": "1.0.0",
+    "description": "Демонстрационный проект AsyncAPI (Kafka) для обучения",
+    "contact": {
+      "name": "Gulash Team",
+      "url": "https://github.com/springwolf/springwolf-core",
+      "email": "support@gulash.org"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0"
+    },
+    "x-generator": "springwolf"
+  },
+  "defaultContentType": "application/json",
+  "servers": {
+    "kafka": {
+      "host": "localhost:9092",
+      "protocol": "kafka"
+    }
+  },
+  "channels": {
+    "notifications-topic": {
+      "address": "notifications-topic",
+      "messages": {
+        "org.gulash.demo.dto.NotificationDto": {
+          "$ref": "#/components/messages/org.gulash.demo.dto.NotificationDto"
+        }
+      },
+      "servers": [
+        {
+          "$ref": "#/servers/kafka"
+        }
+      ]
+    }
+  },
+  "components": {
+    "schemas": {
+      "HeadersNotDocumented": {
+        "title": "HeadersNotDocumented",
+        "type": "object",
+        "properties": {},
+        "description": "There can be headers, but they are not explicitly documented.",
+        "examples": [
+          {}
+        ]
+      },
+      "SpringKafkaDefaultHeaders-NotificationDto": {
+        "title": "SpringKafkaDefaultHeaders-NotificationDto",
+        "type": "object",
+        "properties": {
+          "__TypeId__": {
+            "type": "string",
+            "description": "Spring Type Id Header",
+            "enum": [
+              "org.gulash.demo.dto.NotificationDto"
+            ],
+            "examples": [
+              "org.gulash.demo.dto.NotificationDto"
+            ]
+          }
+        },
+        "examples": [
+          {
+            "__TypeId__": "org.gulash.demo.dto.NotificationDto"
+          }
+        ]
+      },
+      "org.gulash.demo.dto.NotificationDto": {
+        "title": "NotificationDto",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID уведомления",
+            "examples": [
+              "550e8400-e29b-41d4-a716-446655440000"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "description": "Текст уведомления",
+            "examples": [
+              "Ваш заказ успешно оформлен!"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "description": "Тип уведомления",
+            "examples": [
+              "EMAIL"
+            ]
+          }
+        },
+        "description": "Сущность уведомления для асинхронной передачи",
+        "examples": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440000",
+            "message": "Ваш заказ успешно оформлен!",
+            "type": "EMAIL"
+          }
+        ]
+      }
+    },
+    "messages": {
+      "org.gulash.demo.dto.NotificationDto": {
+        "headers": {
+          "$ref": "#/components/schemas/HeadersNotDocumented"
+        },
+        "payload": {
+          "schemaFormat": "application/vnd.aai.asyncapi+json;version=3.0.0",
+          "schema": {
+            "$ref": "#/components/schemas/org.gulash.demo.dto.NotificationDto"
+          }
+        },
+        "name": "org.gulash.demo.dto.NotificationDto",
+        "title": "NotificationDto",
+        "description": "Сущность уведомления для асинхронной передачи",
+        "bindings": {}
+      }
+    }
+  },
+  "operations": {
+    "notifications-topic_receive_consumeNotification": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/notifications-topic"
+      },
+      "title": "notifications-topic_receive",
+      "description": "Получение уведомлений для последующей отправки пользователям",
+      "bindings": {},
+      "messages": [
+        {
+          "$ref": "#/channels/notifications-topic/messages/org.gulash.demo.dto.NotificationDto"
+        }
+      ]
+    },
+    "notifications-topic_send_sendNotification": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/notifications-topic"
+      },
+      "title": "notifications-topic_send",
+      "description": "Публикация уведомления в Kafka топик",
+      "bindings": {},
+      "messages": [
+        {
+          "$ref": "#/channels/notifications-topic/messages/org.gulash.demo.dto.NotificationDto"
+        }
+      ]
+    }
+  }
+}

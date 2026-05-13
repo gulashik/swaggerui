@@ -38,6 +38,17 @@ class OpenApiDocsTest {
     }
 
     /**
+     * Проверяет, что эндпоинт /springwolf/docs доступен и возвращает корректную структуру JSON AsyncAPI.
+     */
+    @Test
+    void shouldReturnAsyncApiDocs() throws Exception {
+        mockMvc.perform(get("/springwolf/docs"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.asyncapi").exists())
+                .andExpect(jsonPath("$.info.title").value("Swagger UI Demo AsyncAPI"));
+    }
+
+    /**
      * Проверяет редирект на Swagger UI.
      */
     @Test
